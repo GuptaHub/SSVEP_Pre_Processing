@@ -27,7 +27,47 @@ raw = mne.io.RawArray(data[:,251:], info)
 print(raw)
 print(raw.info)
 
-# raw.plot(block = True, scalings=dict(mag=1e-12, grad=4e-11, eeg=20e-3, eog=150e-6, ecg=5e-4,
+window_size = 250
+
+sliding_window = []
+temp = 251
+
+# print("Length of Raw",len(raw[0][0][0]))
+raw_len = len(raw[0][0][0])
+
+# Implement Sliding Window
+for sample in range(251,raw_len):
+    if sample != 0 and sample % window_size == 0:
+        # print("raw",raw[:])
+        raw_temp = mne.io.RawArray(data[:,temp:sample],info)
+        sliding_window.append(raw_temp)
+        temp = sample
+    elif raw_len == sample-1:
+        raw_temp = mne.io.RawArray(data[:,temp:sample],info)
+        sliding_window.append(raw_temp)
+        temp = sample
+        break
+
+
+print ("SLIDING WINDOW:",len(sliding_window))
+# print ("TYPE RAW:", type(raw))
+# print ("TYPE SLIDING:",type(sliding_window[0][0]))
+# print ("SLIDING WINDOW [0]",sliding_window[0])
+
+
+# raw.plot(block = True, scalings=dict(mag=1e-12, grad=4e-11, eeg=130, eog=150e-6, ecg=5e-4,
+#  emg=1e2, ref_meg=1e-12, misc=1e-3, stim=1,
+#  resp=1, chpi=1e-4, whitened=1e2))
+
+# sliding_window[0].plot(block = True, scalings=dict(mag=1e-12, grad=4e-11, eeg=130, eog=150e-6, ecg=5e-4,
+#  emg=1e2, ref_meg=1e-12, misc=1e-3, stim=1,
+#  resp=1, chpi=1e-4, whitened=1e2))
+
+# sliding_window[1].plot(block = True, scalings=dict(mag=1e-12, grad=4e-11, eeg=130, eog=150e-6, ecg=5e-4,
+#  emg=1e2, ref_meg=1e-12, misc=1e-3, stim=1,
+#  resp=1, chpi=1e-4, whitened=1e2))
+
+# sliding_window[2].plot(block = True, scalings=dict(mag=1e-12, grad=4e-11, eeg=130, eog=150e-6, ecg=5e-4,
 #  emg=1e2, ref_meg=1e-12, misc=1e-3, stim=1,
 #  resp=1, chpi=1e-4, whitened=1e2))
 
@@ -66,7 +106,7 @@ print('N = ',N)
 # thepower spectrum is:
 
 #channel to read psd from
-index = 1
+index = 3
 
 psd = np.abs(transformed_data[index])
 print (psd)
