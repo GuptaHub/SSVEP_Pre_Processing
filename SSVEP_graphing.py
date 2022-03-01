@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import mne
 import matplotlib.pyplot as plt
+import time
 
 
 filename = 'OpenBCI-RAW-2021-11-15_Twelve.txt'
@@ -93,11 +94,18 @@ for channel in range(len(data)):
     transformed_data.append(np.asarray(window_data)) 
 transformed_data = np.asarray(transformed_data)
 print("TD SHAPE", transformed_data.shape)
+transformed_data = np.abs(transformed_data)**2
 
+### export transformed data as binary .npy
+exported_data = transformed_data[:][:][:31]
 
-N = window_size
+t = time.localtime()
+timestamp = time.strftime('%b-%d-%Y_%H%M', t)
+file = ("FFT Data " + timestamp)
+np.save(file,exported_data)
 
 # x-label for frequencies.
+N = window_size
 freq = np.fft.fftfreq(N,d=1/sfreq)
 
 print('N = ',N)
@@ -105,9 +113,10 @@ print('N = ',N)
 
 #channel to read psd from
 channel = 1
-# window = 12
+# window = 14
 
-psd = np.abs(transformed_data[channel])**2
+psd = transformed_data[channel]
+
 print (psd.shape)
 psd = np.mean(psd, axis=0)
 print (psd.shape)
@@ -116,16 +125,16 @@ print (psd.shape)
 # print(np.mean(data[index]))
 # psd -= np.abs(np.mean(data[index]))
 
-print(psd)
-print(freq)
+print(psd[:31])
+print(freq[:31])
 
 # plot the power spectrum
 # py.plot(psd2D)
 plt.figure(1)
 plt.clf()
-plt.xlim(0,63)
-plt.ylim(0,1e6)
-plt.plot(freq,psd)
+# plt.xlim(0,120)
+# plt.ylim(0,1e6)
+plt.plot(freq[:31],psd[:31])
 plt.show()
 
 # plt.rcParams["figure.autolayout"] = True
