@@ -90,14 +90,14 @@ transformed_data = []
 for channel in range(len(data)):
     window_data = []
     for window in avgless_data:
-        window_data.append(np.fft.fft(window.get_data()[channel]))
+        window_data.append(np.fft.fft(window.get_data()[channel],n=window_size*2))
     transformed_data.append(np.asarray(window_data)) 
 transformed_data = np.asarray(transformed_data)
 print("TD SHAPE", transformed_data.shape)
 transformed_data = np.abs(transformed_data)**2
 
 ### export transformed data as binary .npy
-exported_data = transformed_data[:][:][:31]
+exported_data = transformed_data[:][:][:56]
 
 t = time.localtime()
 timestamp = time.strftime('%b-%d-%Y_%H%M', t)
@@ -105,7 +105,7 @@ file = ("FFT Data " + timestamp)
 np.save(file,exported_data)
 
 # x-label for frequencies.
-N = window_size
+N = window_size*2
 freq = np.fft.fftfreq(N,d=1/sfreq)
 
 print('N = ',N)
@@ -125,8 +125,8 @@ print (psd.shape)
 # print(np.mean(data[index]))
 # psd -= np.abs(np.mean(data[index]))
 
-print(psd[:31])
-print(freq[:31])
+print(psd[:56])
+print(freq[:56])
 
 # plot the power spectrum
 # py.plot(psd2D)
@@ -134,7 +134,7 @@ plt.figure(1)
 plt.clf()
 # plt.xlim(0,120)
 # plt.ylim(0,1e6)
-plt.plot(freq[:31],psd[:31])
+plt.plot(freq[:56],psd[:56])
 plt.show()
 
 # plt.rcParams["figure.autolayout"] = True
